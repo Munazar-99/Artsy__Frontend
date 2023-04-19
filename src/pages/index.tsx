@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader'
-import { GetServerSideProps, GetStaticProps} from 'next'
+import { GetServerSideProps} from 'next'
 import RenderCards from '@/components/RenderCards'
 
 
@@ -47,7 +47,7 @@ const Home = ({allPosts}:Props) => {
                 />
             </article>
             <article className="mt-10">
-                {allPosts.length < 0 ?
+                {allPosts?.length < 0 ?
                     (<article className="flex justify-center items-end h-[25vh]">
                         <Loader />
                     </article>)
@@ -78,7 +78,7 @@ const Home = ({allPosts}:Props) => {
 
 export default Home
 
-export const getServerSideRender: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
  const data = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
  const result = await data.json()
