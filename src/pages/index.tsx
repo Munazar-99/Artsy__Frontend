@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader'
-import { GetStaticProps} from 'next'
+import { GetServerSideProps, GetStaticProps} from 'next'
 import RenderCards from '@/components/RenderCards'
 
 
@@ -9,6 +9,7 @@ type Props = {
   allPosts: ResBody[]
 }
 const Home = ({allPosts}:Props) => {
+
     const [searchedText, setSearchedText] = useState('')
     const [searchedResults, setSearchedResults] = useState<ResBody[]>([])
     const [isSupriseMe, setIsSuprisMe] = useState<boolean>(false)
@@ -77,13 +78,12 @@ const Home = ({allPosts}:Props) => {
 
 export default Home
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideRender: GetServerSideProps<Props> = async () => {
 
  const data = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
  const result = await data.json()
  const allPosts:ResBody[] = result.data.reverse()
   return {
     props: { allPosts },
-    revalidate: 1
   }
 }
