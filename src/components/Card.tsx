@@ -7,9 +7,11 @@ import Image from 'next/image'
 const Card = ({ _id, name, prompt, photo }:{_id:string, name:string, prompt:string, photo:string}) => {
   return (
     <section className="rounded-xl group relative shadow-card hover:shadow-cardhover card">
-      <img
+      <Image
         className='w-full h-auto object-cover rounded-xl'
         src={photo}
+        height={1024}
+        width={1024}
         alt={prompt}
       />
       <article className="group-hover:flex flex-col max-h-[94.5%] hidden absolute bottom-0 left-0 right-0 bg-[#10131f] m-2 p-4 rounded-md">
