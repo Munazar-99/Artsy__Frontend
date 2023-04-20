@@ -1,3 +1,7 @@
+interface ResponseFromServer {
+    success:boolean 
+    data:ResBody[]
+}
 interface ResBody {
     prompt: string
     name: string

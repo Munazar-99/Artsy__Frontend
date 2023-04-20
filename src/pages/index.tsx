@@ -1,23 +1,33 @@
 import React, { useState } from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader'
-import { GetServerSideProps} from 'next'
+import { GetStaticProps} from 'next'
 import RenderCards from '@/components/RenderCards'
+import { fetcher } from '../../utils'
+import useSWR from 'swr';
+
+
 
 
 type Props = {
-  allPosts: ResBody[]
+  allPosts: ResponseFromServer
 }
 const Home = ({allPosts}:Props) => {
 
     const [searchedText, setSearchedText] = useState('')
     const [searchedResults, setSearchedResults] = useState<ResBody[]>([])
     const [isSupriseMe, setIsSuprisMe] = useState<boolean>(false)
-    
-  
+    const { data }:{data:ResponseFromServer} = useSWR(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`, 
+        fetcher, 
+        {
+            fallbackData: allPosts,
+        }
+    );
+    const [dataToBeDisplayed, setDataToBeDisplayed] = useState<ResBody[]>(data?.data.reverse())
     const handleSearch = ( e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedText(e.target.value)
-        const searchResults = allPosts.filter(post => {
+        const searchResults = dataToBeDisplayed.filter(post => {
             return post.name.toLowerCase().includes(searchedText.toLowerCase())
                 || post.prompt.toLowerCase().includes(searchedText.toLowerCase())
         })
@@ -47,7 +57,7 @@ const Home = ({allPosts}:Props) => {
                 />
             </article>
             <article className="mt-10">
-                {allPosts?.length < 0 ?
+                {dataToBeDisplayed?.length < 0 ?
                     (<article className="flex justify-center items-end h-[25vh]">
                         <Loader />
                     </article>)
@@ -63,7 +73,7 @@ const Home = ({allPosts}:Props) => {
                                 <RenderCards data={searchedResults} title="No Searches found" />
                             ) :
                                 (
-                                    <RenderCards data={allPosts} title="No Posts found " />
+                                    <RenderCards data={dataToBeDisplayed} title="No Posts found " />
                                 )
                             }
                         </div>
@@ -78,11 +88,10 @@ const Home = ({allPosts}:Props) => {
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
  const data = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
- const result = await data.json()
- const allPosts:ResBody[] = result.data.reverse()
+ const allPosts:ResponseFromServer = await data.json()
   return {
     props: { allPosts },
   }
