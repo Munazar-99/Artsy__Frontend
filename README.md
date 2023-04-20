@@ -1,6 +1,13 @@
+
 # Artsy
 
 Artsy is a full-stack web application that uses the DAL-E model to convert text into stunning images. Built with Next.js on the front-end and Node.js with MongoDB on the back-end, Artsy empowers you to express your creativity and share your ideas with the world. With Artsy, you can easily create beautiful, eye-catching images that capture the essence of your message and grab your audience's attention.
+
+## App Demo 
+
+ https://artsy-ai.vercel.app/
+
+
 
 ## Technologies Used
 
