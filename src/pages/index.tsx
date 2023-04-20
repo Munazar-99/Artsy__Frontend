@@ -16,7 +16,7 @@ const Home = ({allPosts}:Props) => {
     const [searchedText, setSearchedText] = useState('')
     const [searchedResults, setSearchedResults] = useState<ResBody[]>([])
     const [isSupriseMe, setIsSuprisMe] = useState<boolean>(false)
-    const { data,error,isLoading } = useSWR<ResBody[]>('images', fetcher);
+    const { data,error,isLoading } = useSWR<ResBody[]>('images', fetcher,{fallbackData: allPosts});
 
         
     const handleSearch = ( e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,5 +89,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
  const allPosts:ResBody[] = result.data.reverse()
   return {
     props: { allPosts },
+    revalidate:10
   }
 }
