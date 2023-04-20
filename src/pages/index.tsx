@@ -1,30 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader'
-import { GetStaticProps} from 'next'
+import { GetServerSideProps, GetStaticProps} from 'next'
 import RenderCards from '@/components/RenderCards'
-import { fetcher } from '../../utils'
-import useSWR from 'swr';
-
-
 
 
 type Props = {
-  allPosts: ResponseFromServer
+  allPosts: ResBody[]
 }
 const Home = ({allPosts}:Props) => {
 
     const [searchedText, setSearchedText] = useState('')
     const [searchedResults, setSearchedResults] = useState<ResBody[]>([])
     const [isSupriseMe, setIsSuprisMe] = useState<boolean>(false)
-    const { data }:{data:ResponseFromServer} = useSWR(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`, 
-        fetcher, 
-        {
-            fallbackData: allPosts,
-        }
-    );
-    const [dataToBeDisplayed, setDataToBeDisplayed] = useState<ResBody[]>(data?.data.reverse())
+    const [dataToBeDisplayed, setDataToBeDisplayed] = useState<ResBody[]>(allPosts)
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
+            .then(res => res.json())
+            .then(result => {
+                setDataToBeDisplayed(result.data.reverse())
+            })
+    }, [])
+    
+    
+    
     const handleSearch = ( e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedText(e.target.value)
         const searchResults = dataToBeDisplayed.filter(post => {
@@ -91,7 +90,8 @@ export default Home
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
  const data = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
- const allPosts:ResponseFromServer = await data.json()
+ const result = await data.json()
+ const allPosts:ResBody[] = result.data.reverse()
   return {
     props: { allPosts },
   }
