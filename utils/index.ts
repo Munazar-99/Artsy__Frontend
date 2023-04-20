@@ -1,10 +1,6 @@
 export async function fetcher(url: string, options = {}) {
-    let response;
-    if (!options) {
-        response = await fetch(url);
-    } else {
-        response = await fetch(url, options);
-    }
-    const data = await response.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
+    const result = await response.json()
+    const data:ResBody[] = result.data.reverse()
     return data;
 }

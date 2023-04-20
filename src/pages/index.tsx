@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader'
-import { GetServerSideProps, GetStaticProps} from 'next'
+import useSWR from 'swr';
+import { GetStaticProps} from 'next'
 import RenderCards from '@/components/RenderCards'
+import { fetcher } from '../../utils';
+import { allowedNodeEnvironmentFlags } from 'process';
 
 
 type Props = {
@@ -13,24 +16,16 @@ const Home = ({allPosts}:Props) => {
     const [searchedText, setSearchedText] = useState('')
     const [searchedResults, setSearchedResults] = useState<ResBody[]>([])
     const [isSupriseMe, setIsSuprisMe] = useState<boolean>(false)
-    const [dataToBeDisplayed, setDataToBeDisplayed] = useState<ResBody[]>(allPosts)
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
-            .then(res => res.json())
-            .then(result => {
-                setDataToBeDisplayed(result.data.reverse())
-            })
-    }, [])
-    
-    
-    
+    const { data,error,isLoading } = useSWR<ResBody[]>('images', fetcher);
+
+        
     const handleSearch = ( e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedText(e.target.value)
-        const searchResults = dataToBeDisplayed.filter(post => {
+        const searchResults = data?.filter(post => {
             return post.name.toLowerCase().includes(searchedText.toLowerCase())
                 || post.prompt.toLowerCase().includes(searchedText.toLowerCase())
         })
-        return setSearchedResults(searchResults)
+        return  searchResults && setSearchedResults(searchResults)
     }
 
 
@@ -56,7 +51,7 @@ const Home = ({allPosts}:Props) => {
                 />
             </article>
             <article className="mt-10">
-                {dataToBeDisplayed?.length < 0 ?
+                { isLoading ?
                     (<article className="flex justify-center items-end h-[25vh]">
                         <Loader />
                     </article>)
@@ -68,11 +63,11 @@ const Home = ({allPosts}:Props) => {
                             </h2>
                             )}
                         <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-1 ">
-                            {searchedText ? (
+                            {searchedText  ? (
                                 <RenderCards data={searchedResults} title="No Searches found" />
                             ) :
                                 (
-                                    <RenderCards data={dataToBeDisplayed} title="No Posts found " />
+                                    data && <RenderCards data={data} title="No Posts found " />
                                 )
                             }
                         </div>
