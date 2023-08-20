@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import { GetStaticProps} from 'next'
 import RenderCards from '@/components/RenderCards'
 import { fetcher } from '../../utils';
-import { allowedNodeEnvironmentFlags } from 'process';
 
 
 type Props = {
@@ -83,7 +82,6 @@ const Home = ({allPosts}:Props) => {
 export default Home
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-
  const data = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getPosts`)
  const result = await data.json()
  const allPosts:ResBody[] = result.data.reverse()
