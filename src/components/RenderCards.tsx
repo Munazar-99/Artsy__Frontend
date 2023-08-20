@@ -6,9 +6,9 @@ type Props = { data:ResBody[] , title:string}
 function RenderCards({data, title}: Props) {
     if (data?.length > 0) {
         return <>
-         {data?.map(post => {
+         {data?.map((post, index) => {
             return (
-                <Card key={post._id} {...post} />
+                <Card key={post._id} {...post} index={index} />
             )
         })}
         </> 

@@ -4,7 +4,7 @@ import { downloadImage } from '../utils'
 import Image from 'next/image'
 
 
-const Card = ({ _id, name, prompt, photo }:{_id:string, name:string, prompt:string, photo:string}) => {
+const Card = ({ _id, name, prompt, photo, index }:{_id:string, name:string, prompt:string, photo:string, index:number}) => {
   return (
     <section className="rounded-xl group relative shadow-card hover:shadow-cardhover card">
       <Image
@@ -13,6 +13,7 @@ const Card = ({ _id, name, prompt, photo }:{_id:string, name:string, prompt:stri
         height={1024}
         width={1024}
         alt={prompt}
+        priority={index === 0 ? true : false}
       />
       <article className="group-hover:flex flex-col max-h-[94.5%] hidden absolute bottom-0 left-0 right-0 bg-[#10131f] m-2 p-4 rounded-md">
         <p className='text-white text-md overflow-y-auto prompt'>{prompt}</p>
